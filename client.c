@@ -8,6 +8,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <pthread.h>
+
+char rev_msg[255], send_msg[255];
+int sockfd, portno, n;
+struct sockaddr_in serv_addr;
+struct hostent *server;
 
 void error (const char *msg)
 {
@@ -15,12 +21,43 @@ void error (const char *msg)
 	exit(1);
 }
 
+void* read_msg(void *arg)
+{
+	while(1)
+	{
+		bzero(rev_msg, 255);
+		n = read(sockfd, rev_msg, 255);
+		if(n < 0)
+			error("Error on reading.");
+		printf("Client : %s\n", rev_msg);
+		int i = strncmp("Bye", rev_msg, 3);
+		if(i == 0)
+			break;
+	}
+} 
+
+void* write_msg(void *arg)
+{
+	while(1)
+	{
+		bzero(send_msg, 255);
+		printf("Enter msg here for server :");
+		fgets(send_msg, 255, stdin);
+		n = write(sockfd, send_msg, sizeof(send_msg));
+		if(n < 0)
+			error("Error in writing.");
+		int i = strncmp("Bye", rev_msg, 3);
+		if(i == 0)
+			break;
+	}
+}
+
 int main(int argc, char * argv[])
 {
-	int sockfd, portno, n;
+/*	int sockfd, portno, n;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
-
+*/
 	char buffer[255];
 	if(argc <3)
 	{
@@ -50,8 +87,14 @@ int main(int argc, char * argv[])
 		error("Connection Failed");
 	printf("Client Side\n");
 	printf("========================================\n");
+	
+	pthread_t t1, t2;
+	pthread_create(&t1,NULL,read_msg,NULL);
+	pthread_create(&t2,NULL,write_msg,NULL);
+	pthread_join(t1, NULL);
+	pthread_join(t2, NULL);
 
-	while(1)
+/*	while(1)
 	{
 		printf("Enter msg here for server: ");
 		bzero(buffer , 255);
@@ -68,7 +111,7 @@ int main(int argc, char * argv[])
 		if(z==0)
 			break;
 	}
-
+*/
 	close(sockfd);
 	return 0;
 }

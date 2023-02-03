@@ -7,11 +7,50 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <pthread.h>
+
+char rev_msg[255], send_msg[255];
+int sockfd, newsockfd, portno;
+struct sockaddr_in serv_addr, cli_addr;
+socklen_t clilen;
 
 void error (const char *msg)
 {
 	perror(msg);
 	exit(1);
+}
+
+void* read_msg(void *arg)
+{
+	int n;
+	while(1)
+	{
+		bzero(rev_msg, 255);
+		n = read(newsockfd, rev_msg, 255);
+		if(n < 0)
+			error("Error on reading.");
+		printf("Client : %s\n", rev_msg);
+		int i = strncmp("Bye", send_msg, 3);
+		if(i == 0)
+			break;
+	}
+} 
+
+void* write_msg(void *arg)
+{
+	int n;
+	while(1)
+	{
+		bzero(send_msg, 255);
+		printf("Enter msg here for client :");
+		fgets(send_msg, 255, stdin);
+		n = write(newsockfd, send_msg, sizeof(send_msg));
+		if(n < 0)
+			error("Error in writing.");
+		int i = strncmp("Bye", send_msg, 3);
+		if(i == 0)
+			break;
+	}
 }
 
 int main(int argc, char * argv[])
@@ -22,11 +61,11 @@ int main(int argc, char * argv[])
 		exit(1);
 	}
 
-	int sockfd, newsockfd, portno, n;
-	char buffer[255];
+//	int sockfd, newsockfd, portno, n;
+//	char buffer[255];
 
-	struct sockaddr_in serv_addr, cli_addr;
-	socklen_t clilen;
+//	struct sockaddr_in serv_addr, cli_addr;
+//	socklen_t clilen;
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0)
@@ -60,7 +99,13 @@ int main(int argc, char * argv[])
 		error("Error on Accept");
 	}
 	
-	while(1)
+	pthread_t t1, t2;
+	pthread_create(&t1,NULL,read_msg,NULL);
+	pthread_create(&t2,NULL,write_msg,NULL);
+	pthread_join(t1, NULL);
+	pthread_join(t2, NULL);
+		
+/*	while(1)
 	{
 		bzero(buffer, 255);
 		n = read(newsockfd, buffer, 255);
@@ -77,7 +122,7 @@ int main(int argc, char * argv[])
 		if(i == 0)
 			break;
 	}
-	close(newsockfd);
+*/	close(newsockfd);
 	close(sockfd);
 	return 0;
 }

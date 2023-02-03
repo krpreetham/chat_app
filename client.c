@@ -49,7 +49,7 @@ int main(int argc, char * argv[])
 	if(connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		error("Connection Failed");
 	printf("Client Side\n");
-	printf("-------------------------------------------------------------------");
+	printf("========================================\n");
 
 	while(1)
 	{

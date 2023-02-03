@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
 	}
 	
 	printf("Server Side\n");
-        printf("-----------------------------------------------------------------------------------------------\n");
+        printf("=========================================\n");
 	listen(sockfd, 2);
 
 	clilen = sizeof(cli_addr);

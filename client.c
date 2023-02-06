@@ -41,7 +41,6 @@ void* write_msg(void *arg)
 	while(1)
 	{
 		bzero(send_msg, 255);
-		printf("Enter msg here for server :");
 		fgets(send_msg, 255, stdin);
 		n = write(sockfd, send_msg, sizeof(send_msg));
 		if(n < 0)

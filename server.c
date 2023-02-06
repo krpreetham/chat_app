@@ -42,7 +42,6 @@ void* write_msg(void *arg)
 	while(1)
 	{
 		bzero(send_msg, 255);
-		printf("Enter msg here for client :");
 		fgets(send_msg, 255, stdin);
 		n = write(newsockfd, send_msg, sizeof(send_msg));
 		if(n < 0)

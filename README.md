@@ -1,1 +1,1 @@
-# chat_app
+# Passing a struct over TCP socket

@@ -15,11 +15,18 @@ void error (const char *msg)
 	exit(1);
 }
 
+struct emp_details
+{
+	int emp_id;
+	char emp_name[255];
+};
+
 int main(int argc, char * argv[])
 {
 	int sockfd, portno, n;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
+	struct emp_details temp_emp;
 
 	char buffer[255];
 	if(argc <3)
@@ -53,20 +60,33 @@ int main(int argc, char * argv[])
 
 	while(1)
 	{
-		printf("Enter msg here for server: ");
-		bzero(buffer , 255);
-		fgets(buffer , 255 , stdin);
-		n = write(sockfd , buffer , strlen(buffer));
+		bzero((char *) &temp_emp, sizeof(temp_emp));
+		
+		printf("Enter employee name :");
+//		fgets(temp_emp.emp_name, 255, stdin);
+//		gets(temp_emp.emp_name);
+		scanf("%s", temp_emp.emp_name);
+		printf("Enter employee id :");
+		scanf("%d", &temp_emp.emp_id);
+//		temp_emp.emp_name =getchar();
+		
+//		temp_emp.emp_id=21;
+//		temp_emp.emp_name = "preetham";
+		n = send(sockfd,(void *) &temp_emp , sizeof(temp_emp), 0);
 		if(n < 0)
-			error("Error on writing");
-		bzero(buffer , 255);
-		n = read(sockfd , buffer , 255);
-		if(n <0)
-			error("Error on reading");
-		printf("Server : %s", buffer);
-		int z = strncmp("Bye", buffer , 3);
-		if(z==0)
+			error("Error on sending");
+		bzero((char *) &temp_emp, sizeof(temp_emp));
+		n = recv(sockfd,(struct emp_details *) &temp_emp , sizeof(struct emp_details), 0);
+		if(n < 0)
+			error("Error on reading.");
+		int i = strncmp("null", temp_emp.emp_name, 3);
+		if(i == 0)
 			break;
+		printf("--------------Data from Server---------------\n");
+		printf("Employee name -> %s \nEmployee ID -> %d\n", temp_emp.emp_name, temp_emp.emp_id);
+		printf("------------------------------------------\n");
+		
+		
 	}
 
 	close(sockfd);

@@ -14,6 +14,12 @@ void error (const char *msg)
 	exit(1);
 }
 
+struct emp_details
+{
+	int emp_id;
+	char emp_name[255];
+};
+
 int main(int argc, char * argv[])
 {
 	if(argc < 2)
@@ -27,6 +33,7 @@ int main(int argc, char * argv[])
 
 	struct sockaddr_in serv_addr, cli_addr;
 	socklen_t clilen;
+	struct emp_details temp_emp;
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0)
@@ -62,18 +69,29 @@ int main(int argc, char * argv[])
 	
 	while(1)
 	{
-		bzero(buffer, 255);
-		n = read(newsockfd, buffer, 255);
+		bzero((char *) &temp_emp, sizeof(temp_emp));
+		n = recv(newsockfd,(struct emp_details *) &temp_emp , sizeof(struct emp_details), 0);
 		if(n < 0)
 			error("Error on reading.");
-		printf("Client : %s\n", buffer);
-		bzero(buffer, 255);
-		printf("Enter msg here for client:");
-		fgets(buffer, 255, stdin);
-		n = write(newsockfd, buffer, sizeof(buffer));
+		printf("--------------Data from Client----------------\n");
+		printf("Employee name -> %s\nEmployee ID -> %d\n", temp_emp.emp_name, temp_emp.emp_id);
+		printf("------------------------------------------\n");
+		bzero((char *) &temp_emp, sizeof(temp_emp));
+		
+		printf("Enter employee name :");
+//		fgets(temp_emp.emp_name, 255, stdin);
+//		gets(temp_emp.emp_name);
+		scanf("%s", temp_emp.emp_name);
+		printf("Enter employee id :");
+		scanf("%d", &temp_emp.emp_id);
+//		temp_emp.emp_name =getchar();
+
+//		temp_emp.emp_id = 22;
+//		temp_emp.emp_name = "kr";
+		n = send(newsockfd,(void *) &temp_emp , sizeof(temp_emp), 0);
 		if(n < 0)
 			error("Error in writing.");
-		int i = strncmp("Bye", buffer, 3);
+		int i = strncmp("null", temp_emp.emp_name, 3);
 		if(i == 0)
 			break;
 	}

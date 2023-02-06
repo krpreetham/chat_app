@@ -18,6 +18,8 @@ struct emp_details
 {
 	int emp_id;
 	char emp_name[255];
+	char emp_email_id[255];
+	float exp;
 };
 
 int main(int argc, char * argv[])

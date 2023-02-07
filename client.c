@@ -19,6 +19,8 @@ struct emp_details
 {
 	int emp_id;
 	char emp_name[255];
+	char emp_email_id[255];
+	float exp;
 };
 
 int main(int argc, char * argv[])
@@ -68,6 +70,10 @@ int main(int argc, char * argv[])
 		scanf("%s", temp_emp.emp_name);
 		printf("Enter employee id :");
 		scanf("%d", &temp_emp.emp_id);
+		printf("Enter employee email id :");
+		scanf("%s", temp_emp.emp_email_id);
+		printf("Enter employee experience :");
+		scanf("%f", &temp_emp.exp);
 //		temp_emp.emp_name =getchar();
 		
 //		temp_emp.emp_id=21;
@@ -83,7 +89,7 @@ int main(int argc, char * argv[])
 		if(i == 0)
 			break;
 		printf("--------------Data from Server---------------\n");
-		printf("Employee name -> %s \nEmployee ID -> %d\n", temp_emp.emp_name, temp_emp.emp_id);
+		printf("Employee name -> %s\nEmployee ID -> %d\nEmployee email id -> %s\nExperience -> %f\n", temp_emp.emp_name, temp_emp.emp_id, temp_emp.emp_email_id, temp_emp.exp);
 		printf("------------------------------------------\n");
 		
 		

@@ -76,7 +76,7 @@ int main(int argc, char * argv[])
 		if(n < 0)
 			error("Error on reading.");
 		printf("--------------Data from Client----------------\n");
-		printf("Employee name -> %s\nEmployee ID -> %d\n", temp_emp.emp_name, temp_emp.emp_id);
+		printf("Employee name -> %s\nEmployee ID -> %d\nEmployee email id -> %s\nExperience -> %f\n", temp_emp.emp_name, temp_emp.emp_id, temp_emp.emp_email_id, temp_emp.exp);
 		printf("------------------------------------------\n");
 		bzero((char *) &temp_emp, sizeof(temp_emp));
 		
@@ -86,8 +86,11 @@ int main(int argc, char * argv[])
 		scanf("%s", temp_emp.emp_name);
 		printf("Enter employee id :");
 		scanf("%d", &temp_emp.emp_id);
+		printf("Enter employee email id :");
+		scanf("%s", temp_emp.emp_email_id);
+		printf("Enter employee experience :");
+		scanf("%f", &temp_emp.exp);
 //		temp_emp.emp_name =getchar();
-
 //		temp_emp.emp_id = 22;
 //		temp_emp.emp_name = "kr";
 		n = send(newsockfd,(void *) &temp_emp , sizeof(temp_emp), 0);
